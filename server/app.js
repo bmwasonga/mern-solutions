@@ -1,4 +1,3 @@
-// app.js
 const express = require('express');
 const routes = require('./routes');
 const db = require('./models');
