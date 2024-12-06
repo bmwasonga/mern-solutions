@@ -1,0 +1,54 @@
+#Ignore logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pids
+*.pid
+*.seed
+*.pid.lock
+
+#Ignore local development dependencies
+.devcluster
+
+#Ignore tests
+coverage
+
+#Ignore output of npm scripts
+build
+dist
+
+#Ignore bundled modules
+node_modules
+
+#Ignore local node_modules
+bower_components
+
+#Ignore uploaded files
+uploads
+
+#Ignore user data
+user_data
+
+#Ignore IDE files
+*.sublime-project
+*.sublime-workspace
+
+#Ignore temporary files
+*.swp
+*.swo
+
+#Ignore OSX files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+#Ignore Windows files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
