@@ -1,11 +1,8 @@
-import './App.css';
-
 function App() {
 	return (
-		<>
-			<h1 className='text-3xl font-bold underline'>Hello world!</h1>
-		</>
+		<div className='h-screen bg-slate-600 '>
+			<h1>this is the begining page</h1>
+		</div>
 	);
 }
-
 export default App;

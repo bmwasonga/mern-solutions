@@ -1,10 +1,19 @@
 const express = require('express');
+const cors = require('cors');
+
 const routes = require('./routes');
 const db = require('./models');
 const path = require('path');
 const seedRoles = require('./seeders/roleSeeder');
 
 const app = express();
+
+// Configure CORS to allow requests from the frontend
+app.use(
+	cors({
+		origin: 'http://localhost:5173',
+	})
+);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

@@ -1,9 +1,10 @@
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router';
 import { useAuth } from '../../../hooks/useAuth';
+import { useEffect } from 'react';
 
-function Login() {
-	const { login, isLoading, error } = useAuth();
+function Register() {
+	const { register: signup, isLoading, error, logout } = useAuth();
 	const {
 		register,
 		handleSubmit,
@@ -11,7 +12,8 @@ function Login() {
 	} = useForm();
 
 	const onSubmit = async (data) => {
-		await login({
+		await signup({
+			username: data.username,
 			email: data.email,
 			password: data.password,
 		});
@@ -57,9 +59,11 @@ function Login() {
 				/>
 			</div>
 			<button type='submit' className='button' disabled={isLoading}>
-				{isLoading ? <p>Loading...</p> : 'Login'}
+				{isLoading ? <p>Loading...</p> : 'Register'}
 			</button>
+
+			{signup && <button onClick={() => logout()}>Logout</button>}
 		</form>
 	);
 }
-export default Login;
+export default Register;
