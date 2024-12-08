@@ -1,3 +1,5 @@
+const bcrypt = require('bcryptjs');
+
 const { User, Role } = require('../models');
 const { generateToken } = require('../middleware/auth');
 
@@ -62,16 +64,25 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
 	try {
 		const { username, password } = req.body;
+		console.log(username, password);
+
 		const user = await User.findOne({ where: { username } });
 
-		if (!user || !(await user.validatePassword(password)))
+		if (!user) {
 			return res.status(401).json({ message: 'Invalid credentials' });
+		}
+
+		const isValidPassword = await bcrypt.compare(password, user.password);
+
+		if (!isValidPassword) {
+			return res.status(401).json({ message: 'Invalid credentials' });
+		}
 
 		const token = generateToken(user);
-		// Send the token to the response
+
 		res.status(200).json({
 			message: 'Login successfull.',
-			user: user,
+			user,
 			token,
 		});
 	} catch (error) {
