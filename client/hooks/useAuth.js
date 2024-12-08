@@ -5,6 +5,7 @@ import {
 	logout,
 	clearError,
 	fetchUserProfile,
+	// refetchUser,
 } from '../src/features/authSlice';
 
 export const useAuth = () => {
@@ -18,5 +19,6 @@ export const useAuth = () => {
 		logout: () => dispatch(logout()),
 		clearError: () => dispatch(clearError()),
 		fetchProfile: () => dispatch(fetchUserProfile()),
+		// refetchUser: () => dispatch(refetchUser()),
 	};
 };

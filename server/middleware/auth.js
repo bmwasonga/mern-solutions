@@ -29,7 +29,7 @@ exports.authenticate = async (req, res, next) => {
 	try {
 		const token = req.headers.authorization?.split(' ')[1];
 		if (!token) {
-			return res.status(401).json({ message: 'Authentication required' });
+			return res.status(500).json({ message: 'Authentication required' });
 		}
 
 		const decoded = jwt.verify(token, JWT_SECRET);
@@ -42,6 +42,28 @@ exports.authenticate = async (req, res, next) => {
 		req.user = user;
 		next();
 	} catch (error) {
-		res.status(401).json({ message: 'Invalid token' });
+		res.status(500).json({ message: 'Invalid token' });
+	}
+};
+
+exports.refetchUser = async (req, res, next) => {
+	try {
+		const token = req.headers.authorization?.split(' ')[1];
+		if (!token) {
+			return res.status(500).json({ message: 'Authentication required' });
+		}
+
+		const decoded = jwt.verify(token, JWT_SECRET);
+		const user = await User.findByPk(decoded.id);
+
+		if (!user) {
+			return res.status(401).json({ message: 'User not found' });
+		}
+		res.status(200).json({
+			message: 'Refresh successfull.',
+			user: user,
+		});
+	} catch (error) {
+		res.status(500).json({ message: 'Invalid token' });
 	}
 };

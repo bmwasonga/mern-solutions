@@ -25,7 +25,7 @@ export const registerUser = createAsyncThunk(
 );
 
 export const loginUser = createAsyncThunk(
-	'auth/loginin',
+	'auth/login',
 	async ({ email, password }, { rejectWithValue }) => {
 		try {
 			const response = await fetch(`${backendURL}/api/login`, {

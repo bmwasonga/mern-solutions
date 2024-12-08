@@ -23,6 +23,19 @@ export const loginUser = createAsyncThunk(
 	}
 );
 
+export const refetchUser = createAsyncThunk(
+	'/refetchUser',
+	async (_, { getState, rejectWithValue }) => {
+		try {
+			const { auth } = getState();
+			if (!auth.token) throw new Error('No token available');
+			return await authApi.refetchUser(auth.token);
+		} catch (error) {
+			return rejectWithValue(error.message);
+		}
+	}
+);
+
 export const fetchUserProfile = createAsyncThunk(
 	'/fetchProfile',
 	async (_, { getState, rejectWithValue }) => {
@@ -93,6 +106,19 @@ const authSlice = createSlice({
 				state.isLoading = false;
 				state.error = action.payload;
 			})
+			//refetch user
+			.addCase(refetchUser.pending, (state) => {
+				state.isLoading = true;
+			})
+			.addCase(refetchUser.fulfilled, (state, action) => {
+				state.isLoading = false;
+				state.user = action.payload;
+			})
+			.addCase(refetchUser.rejected, (state, action) => {
+				state.isLoading = false;
+				state.error = action.payload;
+			})
+
 			// Fetch Profile
 			.addCase(fetchUserProfile.pending, (state) => {
 				state.isLoading = true;
