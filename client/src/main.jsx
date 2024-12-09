@@ -21,8 +21,8 @@ createRoot(document.getElementById('root')).render(
 				<Route path='/auth/register' element={<Resgister />} />
 				<Route element={<ProtectedRoute />}>
 					<Route path='/home' element={<Home />} />
+					<Route path='/test' element={<MainLayout />} />
 				</Route>
-				<Route path='/test' element={<MainLayout />} />
 			</Routes>
 		</BrowserRouter>
 	</Provider>

@@ -1,4 +1,7 @@
-const { Member, ActivityLog } = require('../models');
+const { User, Member, ActivityLog, sequelize, db } = require('../models');
+const jwt = require('jsonwebtoken');
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+
 const multer = require('multer');
 const path = require('path');
 
@@ -22,42 +25,64 @@ exports.createMember = async (req, res) => {
 		const { name, email, dateOfBirth } = req.body;
 		const profilePicture = req.file?.path;
 
+		const user = await authenticate(req, res);
+
 		const member = await Member.create({
 			name,
 			email,
 			dateOfBirth,
 			profilePicture,
-			createdBy: req.user.id,
+			createdById: user.id,
 		});
 
-		await ActivityLog.create({
-			userId: req.user.id,
-			actionType: 'CREATE',
-			tableName: 'Members',
-			recordId: member.id,
+		await logActivity(
+			user,
+			'CREATE_MEMBER',
+			`Member ${name} created`,
+			member.id
+		);
+
+		const createdMember = await Member.findOne({
+			where: { id: member.id },
+			include: [
+				{
+					model: db.User,
+					as: 'creator',
+					attributes: ['id', 'email'],
+					include: [
+						{
+							model: db.Role,
+							attributes: ['name'],
+						},
+					],
+				},
+			],
 		});
 
-		res.status(201).json(member);
+		return res.status(201).json({
+			status: 'success',
+			data: createdMember,
+		});
 	} catch (error) {
-		res.status(400).json({ message: error.message });
+		return res.status(400).json({ message: error.message });
 	}
 };
 
 exports.getMember = async (req, res) => {
 	try {
-		const member = await Member.findByPk(req.params.id);
+		const member = await db.Member.findByPk(req.params.id);
 		if (!member) {
 			return res.status(404).json({ message: 'Member not found' });
 		}
-		res.json(member);
+		return res.json(member);
 	} catch (error) {
-		res.status(400).json({ message: error.message });
+		return res.status(400).json({ message: error.message });
 	}
 };
 
 exports.updateMember = async (req, res) => {
 	try {
-		const member = await Member.findByPk(req.params.id);
+		const member = await db.Member.findByPk(req.params.id);
 		if (!member) {
 			return res.status(404).json({ message: 'Member not found' });
 		}
@@ -72,37 +97,56 @@ exports.updateMember = async (req, res) => {
 			...(profilePicture && { profilePicture }),
 		});
 
-		await ActivityLog.create({
-			userId: req.user.id,
-			actionType: 'UPDATE',
-			tableName: 'Members',
-			recordId: member.id,
-		});
+		await logActivity(req.user, 'UPDATE', `Member ${name} updated`, member.id);
 
-		res.json(member);
+		return res.json(member);
 	} catch (error) {
-		res.status(400).json({ message: error.message });
+		return res.status(400).json({ message: error.message });
 	}
 };
 
 exports.deleteMember = async (req, res) => {
 	try {
-		const member = await Member.findByPk(req.params.id);
+		const member = await db.Member.findByPk(req.params.id);
 		if (!member) {
 			return res.status(404).json({ message: 'Member not found' });
 		}
 
 		await member.destroy();
 
-		await ActivityLog.create({
-			userId: req.user.id,
-			actionType: 'DELETE',
-			tableName: 'Members',
-			recordId: req.params.id,
-		});
+		await logActivity(
+			req.user,
+			'DELETE',
+			`Member ${member.name} deleted`,
+			req.params.id
+		);
 
-		res.status(204).send();
+		return res.status(204).send();
 	} catch (error) {
-		res.status(400).json({ message: error.message });
+		return res.status(400).json({ message: error.message });
 	}
+};
+
+const authenticate = async (req, res) => {
+	const token = req.headers.authorization?.split(' ')[1];
+	if (!token) {
+		return res.status(500).json({ message: 'Authentication required' });
+	}
+	try {
+		const decoded = jwt.verify(token, JWT_SECRET);
+		const user = await User.findByPk(decoded.id);
+		return user;
+	} catch (error) {
+		return res.status(500).json({ message: 'Invalid token' });
+	}
+};
+
+const logActivity = async (user, actionType, details, recordId) => {
+	await ActivityLog.create({
+		userId: user.id,
+		actionType,
+		tableName: 'Members',
+		recordId,
+		details,
+	});
 };

@@ -50,7 +50,6 @@ exports.authenticate = async (req, res, next) => {
 exports.refetchUser = async (req, res, next) => {
 	try {
 		const token = req.headers.authorization?.split(' ')[1];
-		console.log('token', req.headers.authorization);
 
 		if (!token) {
 			return res.status(500).json({ message: 'Authentication required' });
@@ -64,9 +63,89 @@ exports.refetchUser = async (req, res, next) => {
 		}
 		res.status(200).json({
 			message: 'Refresh successfull.',
-			user: user,
+			user,
 		});
 	} catch (error) {
 		res.status(500).json({ message: 'Invalid token' });
 	}
 };
+
+// const createMember = async (req, res) => {
+// 	const transaction = await sequelize.transaction();
+
+// 	try {
+// 		const { name, email, dateOfBirth, profilePicture } = req.body;
+
+// 		const token = req.headers.authorization?.split(' ')[1];
+
+// 		if (!token) {
+// 			return res.status(500).json({ message: 'Authentication required' });
+// 		}
+
+// 		const decoded = jwt.verify(token, JWT_SECRET);
+// 		const user = await User.findByPk(decoded.id);
+
+// 		if (!user) {
+// 			throw new Error('User not found');
+// 		}
+
+// 		if (!name || !email || !dateOfBirth) {
+// 			throw new Error('Missing required fields');
+// 		}
+
+// 		const member = await db.Member.create(
+// 			{
+// 				name,
+// 				email,
+// 				dateOfBirth,
+// 				profilePicture,
+// 				createdById: user.id,
+// 			},
+// 			{ transaction }
+// 		);
+
+// 		await db.ActivityLog.create(
+// 			{
+// 				userId: user.id,
+// 				memberId: member.id,
+// 				action: 'CREATE_MEMBER',
+// 				details: `Member ${name} created`,
+// 			},
+// 			{ transaction }
+// 		);
+
+// 		await transaction.commit();
+
+// 		const createdMember = await db.Member.findOne({
+// 			where: { id: member.id },
+// 			include: [
+// 				{
+// 					model: db.User,
+// 					as: 'creator',
+// 					attributes: ['id', 'email'],
+// 					include: [
+// 						{
+// 							model: db.Role,
+// 							attributes: ['name'],
+// 						},
+// 					],
+// 				},
+// 			],
+// 		});
+
+// 		return res.status(201).json({
+// 			status: 'success',
+// 			data: createdMember,
+// 		});
+// 	} catch (error) {
+// 		await transaction.rollback();
+// 		return res.status(400).json({
+// 			status: 'error',
+// 			message: error.message,
+// 		});
+// 	}
+// };
+
+// module.exports = {
+// 	createMember,
+// };

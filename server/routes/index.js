@@ -14,7 +14,6 @@ router.get('/refetch-user', refetchUser);
 // Member routes (protected)
 router.post(
 	'/members',
-	authenticate,
 	memberController.uploadMiddleware,
 	memberController.createMember
 );
