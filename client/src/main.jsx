@@ -10,6 +10,7 @@ import { store } from '../store/store';
 import { Provider } from 'react-redux';
 import ProtectedRoute from './features/ProtectedRoute.jsx';
 import Home from './Pages/Home.jsx';
+import MainLayout from './layouts/MainLayout/MainLayout.jsx';
 
 createRoot(document.getElementById('root')).render(
 	<Provider store={store}>
@@ -21,6 +22,7 @@ createRoot(document.getElementById('root')).render(
 				<Route element={<ProtectedRoute />}>
 					<Route path='/home' element={<Home />} />
 				</Route>
+				<Route path='/test' element={<MainLayout />} />
 			</Routes>
 		</BrowserRouter>
 	</Provider>
