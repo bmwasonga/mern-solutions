@@ -1,54 +1,59 @@
-// const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3000/api';
 const API_URL = 'http://localhost:3001/api';
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-export const authApi = {
-	async register(userData) {
-		const response = await fetch(`${API_URL}/register`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify(userData),
-		});
-
-		if (!response.ok) {
-			const error = await response.json();
-			throw new Error(error.message || 'Registration failed');
-		}
-
-		return response.json();
-	},
-
-	async login(credentials) {
-		const response = await fetch(`${API_URL}/login`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify(credentials),
-		});
-
-		if (!response.ok) {
-			const error = await response.json();
-			throw new Error(error.message || 'Login failed');
-		}
-
-		return response.json();
-	},
-
-	async fetchProfile(token) {
-		const response = await fetch(`${API_URL}/profile`, {
-			headers: {
-				Authorization: `Bearer ${token}`,
-				'Content-Type': 'application/json',
-			},
-		});
-
-		if (!response.ok) {
-			const error = await response.json();
-			throw new Error(error.message || 'Failed to fetch profile');
-		}
-
-		return response.json();
-	},
+const getToken = () => {
+	return localStorage.getItem('token') || null;
 };
+export const authApi = createApi({
+	reducerPath: 'authApi',
+	baseQuery: fetchBaseQuery({
+		baseUrl: API_URL,
+		prepareHeaders: (headers) => {
+			const token = getToken();
+			if (token) {
+				headers.set('Authorization', `Bearer ${token}`);
+			}
+			headers.set('Content-Type', 'application/json');
+			return headers;
+		},
+	}),
+	endpoints: (builder) => ({
+		register: builder.mutation({
+			query: (userData) => ({
+				url: '/register',
+				method: 'POST',
+				body: userData,
+			}),
+		}),
+		login: builder.mutation({
+			query: (credentials) => ({
+				url: '/login',
+				method: 'POST',
+				body: credentials,
+			}),
+		}),
+		fetchProfile: builder.query({
+			query: (token) => ({
+				url: '/refetch-user',
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			}),
+		}),
+		refetchUser: builder.query({
+			query: (token) => ({
+				url: '/refetch-useer',
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			}),
+		}),
+	}),
+});
+
+export const {
+	useRegisterMutation,
+	useLoginMutation,
+	useFetchProfileQuery,
+	useRefetchUserQuery,
+} = authApi;

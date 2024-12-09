@@ -49,6 +49,8 @@ exports.authenticate = async (req, res, next) => {
 exports.refetchUser = async (req, res, next) => {
 	try {
 		const token = req.headers.authorization?.split(' ')[1];
+		console.log('token', req.headers.authorization);
+
 		if (!token) {
 			return res.status(500).json({ message: 'Authentication required' });
 		}

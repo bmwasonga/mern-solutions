@@ -1,10 +1,11 @@
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router';
-import { useAuth } from '../../../hooks/useAuth';
 import { useEffect } from 'react';
+import { useRegisterMutation } from '../../features/authSlice';
 
 function Register() {
-	const { register: signup, isLoading, error, logout } = useAuth();
+	const [signup, { error }] = useSignupMutation();
+	const navigate = useNavigate();
 	const {
 		register,
 		handleSubmit,
@@ -18,6 +19,12 @@ function Register() {
 			password: data.password,
 		});
 	};
+
+	// useEffect(() => {
+	// 	if (isAuthenticated) {
+	// 		navigate('/home');
+	// 	}
+	// }, [isAuthenticated, navigate]);
 
 	return (
 		<form onSubmit={handleSubmit(onSubmit)}>
@@ -58,11 +65,9 @@ function Register() {
 					required
 				/>
 			</div>
-			<button type='submit' className='button' disabled={isLoading}>
-				{isLoading ? <p>Loading...</p> : 'Register'}
+			<button type='submit' className='button'>
+				register
 			</button>
-
-			{signup && <button onClick={() => logout()}>Logout</button>}
 		</form>
 	);
 }

@@ -1,9 +1,14 @@
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router';
 import { useAuth } from '../../../hooks/useAuth';
-
+import { useEffect } from 'react';
+import { useLoginMutation } from '../../features/auth/api';
 function Login() {
-	const { login, isLoading, error } = useAuth();
+	const { login, isLoading, error, isAuthenticated } = useAuth();
+	const [loginMutation] = useLoginMutation();
+
+	const navigate = useNavigate();
+	// console.log(isAuthenticated, 'is here');
 	const {
 		register,
 		handleSubmit,
@@ -11,15 +16,21 @@ function Login() {
 	} = useForm();
 
 	const onSubmit = async (data) => {
-		await login({
-			email: data.email,
+		await loginMutation({
+			username: data.username,
 			password: data.password,
 		});
 	};
+	// useEffect(() => {
+	// 	if (isAuthenticated) {
+	// 		navigate('/home');
+	// 	}
+	// }, [isAuthenticated, navigate]);
 
 	return (
 		<form onSubmit={handleSubmit(onSubmit)}>
-			{error && <p>{error}</p>}
+			{/* {error && <p>{error}</p>} */}
+
 			<div className='form-group'>
 				<label htmlFor='username'>Username</label>
 				<input
@@ -29,15 +40,7 @@ function Login() {
 					required
 				/>
 			</div>
-			<div className='form-group'>
-				<label htmlFor='email'>Email</label>
-				<input
-					type='email'
-					className='form-input'
-					{...register('email')}
-					required
-				/>
-			</div>
+
 			<div className='form-group'>
 				<label htmlFor='password'>Password</label>
 				<input
@@ -47,7 +50,7 @@ function Login() {
 					required
 				/>
 			</div>
-			<div className='form-group'>
+			{/* <div className='form-group'>
 				<label htmlFor='email'>Confirm Password</label>
 				<input
 					type='password'
@@ -55,7 +58,7 @@ function Login() {
 					{...register('confirmPassword')}
 					required
 				/>
-			</div>
+			</div> */}
 			<button type='submit' className='button' disabled={isLoading}>
 				{isLoading ? <p>Loading...</p> : 'Login'}
 			</button>

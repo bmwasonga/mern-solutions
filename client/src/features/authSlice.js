@@ -1,59 +1,18 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import { authApi } from './auth/api';
 
-export const registerUser = createAsyncThunk(
-	'/register',
-	async (userData, { rejectWithValue }) => {
-		try {
-			return await authApi.register(userData);
-		} catch (error) {
-			return rejectWithValue(error.message);
-		}
-	}
-);
-
-export const loginUser = createAsyncThunk(
-	'/login',
-	async (credentials, { rejectWithValue }) => {
-		try {
-			return await authApi.login(credentials);
-		} catch (error) {
-			return rejectWithValue(error.message);
-		}
-	}
-);
-
-export const refetchUser = createAsyncThunk(
-	'/refetchUser',
-	async (_, { getState, rejectWithValue }) => {
-		try {
-			const { auth } = getState();
-			if (!auth.token) throw new Error('No token available');
-			return await authApi.refetchUser(auth.token);
-		} catch (error) {
-			return rejectWithValue(error.message);
-		}
-	}
-);
-
-export const fetchUserProfile = createAsyncThunk(
-	'/fetchProfile',
-	async (_, { getState, rejectWithValue }) => {
-		try {
-			const { auth } = getState();
-			if (!auth.token) throw new Error('No token available');
-			return await authApi.fetchProfile(auth.token);
-		} catch (error) {
-			return rejectWithValue(error.message);
-		}
-	}
-);
+// Export hooks for usage in components
+export const {
+	useRegisterMutation,
+	useLoginMutation,
+	useFetchProfileQuery,
+	useRefetchUserQuery,
+} = authApi;
 
 const initialState = {
 	user: null,
 	token: localStorage.getItem('token'),
 	isAuthenticated: false,
-	isLoading: false,
 	error: null,
 };
 
@@ -74,63 +33,63 @@ const authSlice = createSlice({
 	},
 	extraReducers: (builder) => {
 		builder
-			// Register
-			.addCase(registerUser.pending, (state) => {
-				state.isLoading = true;
-				state.error = null;
-			})
-			.addCase(registerUser.fulfilled, (state, action) => {
-				state.isLoading = false;
-				state.isAuthenticated = true;
-				state.user = action.payload.user;
-				state.token = action.payload.token;
-				localStorage.setItem('token', action.payload.token);
-			})
-			.addCase(registerUser.rejected, (state, action) => {
-				state.isLoading = false;
-				state.error = action.payload;
-			})
-			// Login
-			.addCase(loginUser.pending, (state) => {
-				state.isLoading = true;
-				state.error = null;
-			})
-			.addCase(loginUser.fulfilled, (state, action) => {
-				state.isLoading = false;
-				state.isAuthenticated = true;
-				state.user = action.payload.user;
-				state.token = action.payload.token;
-				localStorage.setItem('token', action.payload.token);
-			})
-			.addCase(loginUser.rejected, (state, action) => {
-				state.isLoading = false;
-				state.error = action.payload;
-			})
-			//refetch user
-			.addCase(refetchUser.pending, (state) => {
-				state.isLoading = true;
-			})
-			.addCase(refetchUser.fulfilled, (state, action) => {
-				state.isLoading = false;
-				state.user = action.payload;
-			})
-			.addCase(refetchUser.rejected, (state, action) => {
-				state.isLoading = false;
-				state.error = action.payload;
-			})
-
-			// Fetch Profile
-			.addCase(fetchUserProfile.pending, (state) => {
-				state.isLoading = true;
-			})
-			.addCase(fetchUserProfile.fulfilled, (state, action) => {
-				state.isLoading = false;
-				state.user = action.payload;
-			})
-			.addCase(fetchUserProfile.rejected, (state, action) => {
-				state.isLoading = false;
-				state.error = action.payload;
-			});
+			// Handle registration success
+			.addMatcher(
+				authApi.endpoints.register.matchFulfilled,
+				(state, { payload }) => {
+					state.isAuthenticated = true;
+					state.user = payload.user;
+					state.token = payload.token;
+					state.error = null;
+					localStorage.setItem('token', payload.token);
+				}
+			)
+			// Handle login success
+			.addMatcher(
+				authApi.endpoints.login.matchFulfilled,
+				(state, { payload }) => {
+					state.isAuthenticated = true;
+					state.user = payload.user;
+					state.token = payload.token;
+					state.error = null;
+					localStorage.setItem('token', payload.token);
+				}
+			)
+			// Handle fetch profile success
+			.addMatcher(
+				authApi.endpoints.fetchProfile.matchFulfilled,
+				(state, { payload }) => {
+					state.user = payload;
+					state.error = null;
+				}
+			)
+			// Handle fetch profile success
+			.addMatcher(
+				authApi.endpoints.refetchUser.matchFulfilled,
+				(state, { payload }) => {
+					state.user = payload;
+					state.error = null;
+				}
+			)
+			// Handle any API errors
+			.addMatcher(
+				authApi.endpoints.register.matchRejected,
+				(state, { payload }) => {
+					state.error = payload?.data?.message || 'Registration failed';
+				}
+			)
+			.addMatcher(
+				authApi.endpoints.login.matchRejected,
+				(state, { payload }) => {
+					state.error = payload?.data?.message || 'Login failed';
+				}
+			)
+			.addMatcher(
+				authApi.endpoints.fetchProfile.matchRejected,
+				(state, { payload }) => {
+					state.error = payload?.data?.message || 'Failed to fetch profile';
+				}
+			);
 	},
 });
 

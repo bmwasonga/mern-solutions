@@ -1,14 +1,9 @@
 import { useLocation, Navigate, Outlet } from 'react-router';
-import { useSelector } from 'react-redux';
-//create a custom hook to select the current token
+import { useAuth } from '../../hooks/useAuth';
 
 const ProtectedRoute = () => {
 	const location = useLocation();
-	const { token } = useSelector((state) => state.auth);
-
-	if (!token) {
-		return <Navigate to='/' state={{ from: location }} />;
-	}
+	const { token } = useAuth();
 
 	return token ? (
 		<Outlet />
