@@ -71,10 +71,22 @@ exports.createMember = async (req, res) => {
 
 exports.getMember = async (req, res) => {
 	try {
-		const member = await db.Member.findByPk(req.params.id);
+		const user = await authenticate(req, res);
+
+		if (!user) {
+			return res.status(401).json({ message: 'Unauthorized' });
+		}
+		const member = await Member.findByPk(req.params.id);
 		if (!member) {
 			return res.status(404).json({ message: 'Member not found' });
 		}
+		await logActivity(
+			user,
+			'FETCH_MEMBERS',
+			`User ${user.name} fetched all members`,
+			user.id
+		);
+
 		return res.json(member);
 	} catch (error) {
 		return res.status(400).json({ message: error.message });
@@ -83,6 +95,8 @@ exports.getMember = async (req, res) => {
 
 exports.updateMember = async (req, res) => {
 	try {
+		const user = await authenticate(req, res);
+
 		const member = await db.Member.findByPk(req.params.id);
 		if (!member) {
 			return res.status(404).json({ message: 'Member not found' });
@@ -90,6 +104,13 @@ exports.updateMember = async (req, res) => {
 
 		const { name, email, dateOfBirth } = req.body;
 		const profilePicture = req.file?.path;
+
+		await logActivity(
+			user,
+			'UPDATE_MEMBER',
+			`Member ${member} was updated by ${user.name}`,
+			user.id
+		);
 
 		await member.update({
 			name,
@@ -117,8 +138,8 @@ exports.deleteMember = async (req, res) => {
 
 		await logActivity(
 			req.user,
-			'DELETE',
-			`Member ${member.name} deleted`,
+			'DELETE_MEMBER',
+			`Member ${member.name} was deleted`,
 			req.params.id
 		);
 
@@ -142,7 +163,8 @@ const authenticate = async (req, res) => {
 	}
 };
 
-const logActivity = async (user, actionType, details, recordId) => {
+// this should be later exported
+exports.logActivity = async (user, actionType, details, recordId) => {
 	await ActivityLog.create({
 		userId: user.id,
 		actionType,

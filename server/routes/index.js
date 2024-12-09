@@ -13,13 +13,19 @@ router.get('/refetch-user', refetchUser);
 
 // Member routes (protected)
 router.post(
-	'/members',
+	'/create-member',
 	memberController.uploadMiddleware,
 	memberController.createMember
 );
-router.get('/members/:id', authenticate, memberController.getMember);
+router.get('/getmember/:id', authenticate, memberController.getMember);
 router.put(
 	'/members/:id',
+	authenticate,
+	memberController.uploadMiddleware,
+	memberController.updateMember
+);
+router.post(
+	'/update-member',
 	authenticate,
 	memberController.uploadMiddleware,
 	memberController.updateMember

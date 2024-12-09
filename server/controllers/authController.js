@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 
 const { User, Role } = require('../models');
 const { generateToken } = require('../middleware/auth');
+const { logActivity } = require('./memberController');
 
 //Handle Registration
 exports.register = async (req, res) => {
@@ -31,6 +32,13 @@ exports.register = async (req, res) => {
 			password,
 			roleId: role.id,
 		});
+
+		await logActivity(
+			user,
+			'CREATE_USER',
+			`Member ${username} created`,
+			user.id
+		);
 
 		// Fetch the created user with role information
 		const userWithRole = await User.findOne({
@@ -79,6 +87,8 @@ exports.login = async (req, res) => {
 		}
 
 		const token = generateToken(user);
+
+		await logActivity(user, 'LOGIN_USER', `User ${username} Loggedin`, user.id);
 
 		res.status(200).json({
 			message: 'Login successfull.',
