@@ -5,6 +5,7 @@ const routes = require('./routes');
 const db = require('./models');
 const path = require('path');
 const seedRoles = require('./seeders/roleSeeder');
+const seedMembers = require('./seeders/memberSeeder');
 
 const app = express();
 
@@ -28,6 +29,7 @@ db.sequelize.sync().then(async () => {
 	try {
 		// Seed roles after database sync
 		await seedRoles(db);
+		// await seedMembers(db);
 
 		app.listen(PORT, () => {
 			console.log(`Server running on port ${PORT}`);
