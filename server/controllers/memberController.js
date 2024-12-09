@@ -1,4 +1,4 @@
-const { User, Member, ActivityLog, sequelize, db } = require('../models');
+const { User, Member, ActivityLog, Role, db } = require('../models');
 const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
@@ -26,6 +26,7 @@ exports.createMember = async (req, res) => {
 		const profilePicture = req.file?.path;
 
 		const user = await authenticate(req, res);
+		console.log(user.id);
 
 		const member = await Member.create({
 			name,
@@ -46,12 +47,12 @@ exports.createMember = async (req, res) => {
 			where: { id: member.id },
 			include: [
 				{
-					model: db.User,
+					model: User,
 					as: 'creator',
 					attributes: ['id', 'email'],
 					include: [
 						{
-							model: db.Role,
+							model: Role,
 							attributes: ['name'],
 						},
 					],

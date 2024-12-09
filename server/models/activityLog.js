@@ -6,14 +6,6 @@ module.exports = (sequelize) => {
 			type: DataTypes.ENUM('CREATE', 'READ', 'UPDATE', 'DELETE'),
 			allowNull: false,
 		},
-		entityType: {
-			type: DataTypes.STRING,
-			allowNull: false,
-		},
-		entityId: {
-			type: DataTypes.INTEGER,
-			allowNull: false,
-		},
 		details: {
 			type: DataTypes.JSON,
 			allowNull: true,
