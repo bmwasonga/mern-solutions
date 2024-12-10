@@ -4,6 +4,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
 const multer = require('multer');
 const path = require('path');
+const { logActivity } = require('../middleware/auth');
 
 const storage = multer.diskStorage({
 	destination: 'uploads/',
@@ -26,7 +27,6 @@ exports.createMember = async (req, res) => {
 		const profilePicture = req.file?.path;
 
 		const user = await authenticate(req, res);
-		console.log(user.id);
 
 		const member = await Member.create({
 			name,
@@ -83,11 +83,46 @@ exports.getMember = async (req, res) => {
 		await logActivity(
 			user,
 			'FETCH_MEMBERS',
-			`User ${user.name} fetched all members`,
+			`User ${user.name} fetched member ${member.name}`,
 			user.id
 		);
 
 		return res.json(member);
+	} catch (error) {
+		return res.status(400).json({ message: error.message });
+	}
+};
+
+exports.getAllMembers = async (req, res) => {
+	try {
+		const user = await authenticate(req, res);
+
+		if (!user) {
+			return res.status(401).json({ message: 'Unauthorized' });
+		}
+		const members = await Member.findAll({
+			include: [
+				{
+					model: User,
+					as: 'creator',
+					attributes: ['id', 'email'],
+					include: [
+						{
+							model: Role,
+							attributes: ['name'],
+						},
+					],
+				},
+			],
+		});
+		await logActivity(
+			user,
+			'FETCH_ALL_MEMBERS',
+			`User ${user.name} fetched all members`,
+			user.id
+		);
+
+		return res.json(members);
 	} catch (error) {
 		return res.status(400).json({ message: error.message });
 	}
@@ -129,6 +164,7 @@ exports.updateMember = async (req, res) => {
 
 exports.deleteMember = async (req, res) => {
 	try {
+		const user = await authenticate(req, res);
 		const member = await db.Member.findByPk(req.params.id);
 		if (!member) {
 			return res.status(404).json({ message: 'Member not found' });
@@ -137,7 +173,7 @@ exports.deleteMember = async (req, res) => {
 		await member.destroy();
 
 		await logActivity(
-			req.user,
+			user,
 			'DELETE_MEMBER',
 			`Member ${member.name} was deleted`,
 			req.params.id
@@ -161,15 +197,4 @@ const authenticate = async (req, res) => {
 	} catch (error) {
 		return res.status(500).json({ message: 'Invalid token' });
 	}
-};
-
-// this should be later exported
-exports.logActivity = async (user, actionType, details, recordId) => {
-	await ActivityLog.create({
-		userId: user.id,
-		actionType,
-		tableName: 'Members',
-		recordId,
-		details,
-	});
 };

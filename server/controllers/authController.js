@@ -1,8 +1,8 @@
 const bcrypt = require('bcryptjs');
-
+const jwt = require('jsonwebtoken');
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 const { User, Role } = require('../models');
-const { generateToken } = require('../middleware/auth');
-const { logActivity } = require('./memberController');
+const { generateToken, logActivity } = require('../middleware/auth');
 
 //Handle Registration
 exports.register = async (req, res) => {
@@ -72,7 +72,6 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
 	try {
 		const { username, password } = req.body;
-		console.log(username, password);
 
 		const user = await User.findOne({ where: { username } });
 
@@ -88,6 +87,7 @@ exports.login = async (req, res) => {
 
 		const token = generateToken(user);
 
+		console.log(user.id);
 		await logActivity(user, 'LOGIN_USER', `User ${username} Loggedin`, user.id);
 
 		res.status(200).json({
@@ -97,5 +97,37 @@ exports.login = async (req, res) => {
 		});
 	} catch (error) {
 		res.status(400).json({ message: error.message });
+	}
+};
+
+//Export this form here
+exports.refetchUser = async (req, res) => {
+	try {
+		const token = req.headers.authorization?.split(' ')[1];
+
+		if (!token) {
+			return res.status(401).json({ message: 'Authentication required' });
+		}
+
+		const decoded = jwt.verify(token, JWT_SECRET);
+		const user = await User.findByPk(decoded.id);
+
+		if (!user) {
+			return res.status(401).json({ message: 'User not found' });
+		}
+
+		await logActivity(
+			user,
+			'REFETCH_USER',
+			` ${user.id} refetched data`,
+			user.id
+		);
+
+		res.status(200).json({
+			message: 'Refresh successfull.',
+			user,
+		});
+	} catch (error) {
+		res.status(401).json({ message: 'Invalid token' });
 	}
 };

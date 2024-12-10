@@ -48,6 +48,14 @@ export const authApi = createApi({
 				},
 			}),
 		}),
+		fetchAllMembers: builder.query({
+			query: (token) => ({
+				url: '/fetch-all-members',
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			}),
+		}),
 	}),
 });
 
@@ -56,4 +64,5 @@ export const {
 	useLoginMutation,
 	useFetchProfileQuery,
 	useRefetchUserQuery,
+	useFetchAllMembersQuery,
 } = authApi;
