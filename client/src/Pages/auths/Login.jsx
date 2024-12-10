@@ -4,7 +4,7 @@ import { useAuth } from '../../../hooks/useAuth';
 import { useEffect } from 'react';
 import { useLoginMutation } from '../../features/auth/api';
 function Login() {
-	const { login, error, isAuthenticated } = useAuth();
+	// const { login, error, isAuthenticated } = useAuth();
 	const [loginMutation, { isError, isSuccess, isLoading }] = useLoginMutation();
 
 	const navigate = useNavigate();

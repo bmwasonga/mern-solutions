@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { authApi } from './auth/api';
+import { act } from 'react';
 
 // Export hooks for usage in components
 export const {
@@ -7,6 +8,7 @@ export const {
 	useLoginMutation,
 	useFetchProfileQuery,
 	useRefetchUserQuery,
+	useGetAllMembersQuery,
 } = authApi;
 
 const initialState = {
@@ -14,6 +16,11 @@ const initialState = {
 	token: localStorage.getItem('token'),
 	isAuthenticated: false,
 	error: null,
+	selectedMember: null,
+	members: [],
+	activities: [],
+	page: 1,
+	perPage: 10,
 };
 
 const authSlice = createSlice({
@@ -29,6 +36,9 @@ const authSlice = createSlice({
 		},
 		clearError: (state) => {
 			state.error = null;
+		},
+		setSelectedMember: (state, action) => {
+			state.selectedMember = action.payload;
 		},
 	},
 	extraReducers: (builder) => {
@@ -71,7 +81,31 @@ const authSlice = createSlice({
 					state.error = null;
 				}
 			)
+			//handle getting all members
+			.addMatcher(
+				authApi.endpoints.getAllMembers.matchFulfilled,
+				(state, { payload }) => {
+					state.members = payload;
+					state.error = null;
+				}
+			)
 			// Handle any API errors
+			.addMatcher(
+				authApi.endpoints.getAllMembers.matchRejected,
+				(state, { payload }) => {
+					state.error = payload?.data?.message || 'Failed to get all members';
+				}
+			)
+
+			//handle getting all activities
+			.addMatcher(
+				authApi.endpoints.getAllActivities.matchFulfilled,
+				(state, { payload }) => {
+					state.activities = payload;
+					state.error = null;
+				}
+			)
+
 			.addMatcher(
 				authApi.endpoints.register.matchRejected,
 				(state, { payload }) => {
@@ -93,5 +127,5 @@ const authSlice = createSlice({
 	},
 });
 
-export const { logout, clearError } = authSlice.actions;
+export const { logout, clearError, setSelectedMember } = authSlice.actions;
 export default authSlice.reducer;

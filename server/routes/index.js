@@ -3,6 +3,7 @@ const router = express.Router();
 const authController = require('../controllers/authController');
 const memberController = require('../controllers/memberController');
 const { authenticate } = require('../middleware/auth');
+const { getAllActivities } = require('../controllers/activityController');
 
 // Auth routes
 router.post('/register', authController.register);
@@ -32,5 +33,7 @@ router.post(
 	memberController.updateMember
 );
 router.delete('/member/:id', authenticate, memberController.deleteMember);
+
+router.get('/activities', getAllActivities);
 
 module.exports = router;

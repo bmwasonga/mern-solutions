@@ -11,6 +11,8 @@ import { Provider } from 'react-redux';
 import ProtectedRoute from './features/ProtectedRoute.jsx';
 import Home from './Pages/Home.jsx';
 import MainLayout from './layouts/MainLayout/MainLayout.jsx';
+import Members from './Pages/tables /Members.jsx';
+import Activities from './Pages/tables /Activities.jsx';
 
 createRoot(document.getElementById('root')).render(
 	<Provider store={store}>
@@ -22,6 +24,8 @@ createRoot(document.getElementById('root')).render(
 				<Route element={<ProtectedRoute />}>
 					<Route path='/home' element={<Home />} />
 					<Route path='/test' element={<MainLayout />} />
+					<Route path='/members' element={<Members />} />
+					<Route path='/activities' element={<Activities />} />
 				</Route>
 			</Routes>
 		</BrowserRouter>

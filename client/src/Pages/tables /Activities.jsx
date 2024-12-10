@@ -1,10 +1,10 @@
-import { useGetAllMembersQuery } from '../../features/auth/api';
+import { useGetAllActivitiesQuery } from '../../features/auth/api';
 import Table from '../../layouts/MainLayout/components/Tables';
 import MainLayout from '../../layouts/MainLayout/MainLayout';
-const Members = () => {
-	const { data: members, isLoading, error } = useGetAllMembersQuery();
+const Activities = () => {
+	const { data: activities, isLoading, error } = useGetAllActivitiesQuery();
 
-	console.log('the members are', members);
+	console.log('the members are', activities);
 	const columns = [
 		{ key: 'id', label: 'ID' },
 		{ key: 'name', label: 'Name' },
@@ -22,21 +22,20 @@ const Members = () => {
 		{ key: 'updatedAt', label: 'Updated At' },
 	];
 
-	{
-		isLoading && !error && <p>Loading...</p>;
-	}
 	return (
 		<MainLayout>
 			<h1>Members table</h1>
-			<Table
+			{isLoading && <p>Loading...</p>}
+			{error && <p>Error: {error}</p>}
+			{/* <Table
 				isLoading={isLoading}
-				data={members}
+				data={activities}
 				columns={columns}
 				itemsPerPage={5}
 				searchable
 				sortable
-			/>
+			/> */}
 		</MainLayout>
 	);
 };
-export default Members;
+export default Activities;
