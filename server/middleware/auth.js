@@ -2,6 +2,7 @@
 const jwt = require('jsonwebtoken');
 const { User } = require('../models');
 const e = require('express');
+const { logActivity } = require('../controllers/memberController');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
@@ -61,6 +62,12 @@ exports.refetchUser = async (req, res, next) => {
 		if (!user) {
 			return res.status(401).json({ message: 'User not found' });
 		}
+		// await logActivity(
+		// 	req.user,
+		// 	'REFETCH_USER',
+		// 	` ${user.name} refetched data`,
+		// 	req.params.id
+		// );
 		res.status(200).json({
 			message: 'Refresh successfull.',
 			user,
