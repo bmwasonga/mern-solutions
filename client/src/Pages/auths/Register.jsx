@@ -1,10 +1,10 @@
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router';
 import { useEffect } from 'react';
-import { useRegisterMutation } from '../../features/authSlice';
+import { useRegisterMutation } from '../../features/auth/api';
 
 function Register() {
-	const [signup, { error }] = useSignupMutation();
+	const [signup, { error }] = useRegisterMutation();
 	const navigate = useNavigate();
 	const {
 		register,

@@ -1,9 +1,6 @@
-const API_URL = 'http://localhost:3001/api';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { API_URL, getToken } from '../../constants';
 
-const getToken = () => {
-	return localStorage.getItem('token') || null;
-};
 export const authApi = createApi({
 	reducerPath: 'authApi',
 	baseQuery: fetchBaseQuery({
@@ -46,6 +43,8 @@ export const authApi = createApi({
 				headers: {
 					Authorization: `Bearer ${token}`,
 				},
+				keepUnusedDataFor: 10000,
+				refetchOnMountOrArgChange: true, // Ensure fresh data on mount
 			}),
 		}),
 		getAllMembers: builder.query({
@@ -56,14 +55,14 @@ export const authApi = createApi({
 				},
 			}),
 		}),
-		getAllActivities: builder.query({
-			query: (token) => ({
-				url: '/get-all-members',
-				headers: {
-					Authorization: `Bearer ${token}`,
-				},
-			}),
-		}),
+		// getAllActivities: builder.query({
+		// 	query: (token) => ({
+		// 		url: '/activities',
+		// 		headers: {
+		// 			Authorization: `Bearer ${token}`,
+		// 		},
+		// 	}),
+		// }),
 	}),
 });
 
@@ -73,5 +72,5 @@ export const {
 	useFetchProfileQuery,
 	useRefetchUserQuery,
 	useGetAllMembersQuery,
-	useGetAllActivitiesQuery,
+	// useGetAllActivitiesQuery,
 } = authApi;

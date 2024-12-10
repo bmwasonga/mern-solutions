@@ -1,26 +1,16 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { authApi } from './auth/api';
-import { act } from 'react';
-
-// Export hooks for usage in components
-export const {
-	useRegisterMutation,
-	useLoginMutation,
-	useFetchProfileQuery,
-	useRefetchUserQuery,
-	useGetAllMembersQuery,
-} = authApi;
 
 const initialState = {
 	user: null,
 	token: localStorage.getItem('token'),
 	isAuthenticated: false,
 	error: null,
-	selectedMember: null,
-	members: [],
-	activities: [],
-	page: 1,
-	perPage: 10,
+	// selectedMember: null,
+	// members: [],
+	// activities: [],
+	// page: 1,
+	// perPage: 10,
 };
 
 const authSlice = createSlice({
@@ -94,15 +84,6 @@ const authSlice = createSlice({
 				authApi.endpoints.getAllMembers.matchRejected,
 				(state, { payload }) => {
 					state.error = payload?.data?.message || 'Failed to get all members';
-				}
-			)
-
-			//handle getting all activities
-			.addMatcher(
-				authApi.endpoints.getAllActivities.matchFulfilled,
-				(state, { payload }) => {
-					state.activities = payload;
-					state.error = null;
 				}
 			)
 

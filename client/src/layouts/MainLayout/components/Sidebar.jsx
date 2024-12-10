@@ -1,13 +1,17 @@
-import { HiOutlineX } from 'react-icons/hi';
+import {
+	HiOutlineX,
+	HiHome,
+	HiOutlinePresentationChartLine,
+} from 'react-icons/hi';
+import { IoPeople, IoSettingsOutline } from 'react-icons/io5';
 import { logout } from '../../../features/authSlice';
 
 const Sidebar = ({ toggleSidebar, isSidebarOpen }) => {
 	const navItems = [
-		{ name: 'Dashboard', icon: '🏠' },
-		{ name: 'Analytics', icon: '📊' },
-		{ name: 'Users', icon: '👥' },
-		{ name: 'Messages', icon: '✉️' },
-		{ name: 'Settings', icon: '⚙️' },
+		{ name: 'Dashboard', icon: <HiHome /> },
+		{ name: 'Analytics', icon: <HiOutlinePresentationChartLine /> },
+		{ name: 'Users', icon: <IoPeople /> },
+		{ name: 'Settings', icon: <IoSettingsOutline /> },
 	];
 
 	return (

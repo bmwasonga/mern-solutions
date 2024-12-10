@@ -2,7 +2,12 @@ import { useGetAllMembersQuery } from '../../features/auth/api';
 import Table from '../../layouts/MainLayout/components/Tables';
 import MainLayout from '../../layouts/MainLayout/MainLayout';
 const Members = () => {
-	const { data: members, isLoading, error } = useGetAllMembersQuery();
+	const {
+		data: members,
+		isLoading,
+		error,
+		token,
+	} = useGetAllMembersQuery(token);
 
 	console.log('the members are', members);
 	const columns = [

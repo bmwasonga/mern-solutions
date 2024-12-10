@@ -2,7 +2,7 @@ const { ActivityLog, User, Role } = require('../models');
 
 exports.getAllActivities = async (req, res) => {
 	const page = req.query.page || 1;
-	const perPage = req.query.perPage || 10;
+	const perPage = req.query.perPage || 20;
 	const offset = (page - 1) * perPage;
 
 	const activities = await ActivityLog.findAll({
