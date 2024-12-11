@@ -61,6 +61,7 @@ const authSlice = createSlice({
 				(state, { payload }) => {
 					state.user = payload;
 					state.error = null;
+					state.isAuthenticated = true;
 				}
 			)
 			// Handle fetch profile success
@@ -69,6 +70,7 @@ const authSlice = createSlice({
 				(state, { payload }) => {
 					state.user = payload;
 					state.error = null;
+					state.isAuthenticated = true;
 				}
 			)
 			//handle getting all members

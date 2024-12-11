@@ -1,19 +1,19 @@
 import { useEffect } from 'react';
-import { useGetAllActivitiesQuery } from '../../features/auth/activitiesApi';
+import { getAllActivities } from '../../features/auth/activitiesApi';
 import Table from '../../layouts/MainLayout/components/Tables';
 import MainLayout from '../../layouts/MainLayout/MainLayout';
+import { useDispatch, useSelector } from 'react-redux';
 const Activities = () => {
-	const { data: activities, isLoading, error } = useGetAllActivitiesQuery();
+	const dispatch = useDispatch();
+	const { activities, isLoading, error } = useSelector(
+		(state) => state.activities
+	);
 
 	useEffect(() => {
-		// Set a timeout to update the state after 3 seconds
-		const timer = setTimeout(() => {
-			console.log(activities);
-		}, 3000);
+		dispatch(getAllActivities());
+	}, [dispatch]);
 
-		// Cleanup function to clear the timeout if the component unmounts
-		return () => clearTimeout(timer);
-	}, [activities]); // Empty dependency array ensures this runs only on mount
+	console.log('the activities are', activities);
 	const columns = [
 		{ key: 'id', label: 'ID' },
 		{ key: 'actionType', label: 'actionType' },

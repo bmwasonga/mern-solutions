@@ -23,7 +23,7 @@ function Login() {
 	};
 	useEffect(() => {
 		if (isSuccess) {
-			navigate('/home');
+			navigate('/test');
 		}
 	}, [isSuccess, navigate]);
 

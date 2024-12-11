@@ -1,14 +1,25 @@
 import { useLocation, Navigate, Outlet } from 'react-router';
-import { useAuth } from '../../hooks/useAuth';
-
+import { useRefetchUserQuery } from './auth/api';
+import { skipToken } from '@reduxjs/toolkit/query';
+import { getToken } from '../constants';
 const ProtectedRoute = () => {
 	const location = useLocation();
-	const { token } = useAuth();
+	const token = getToken();
+
+	const { data: userData, isLoading } = useRefetchUserQuery();
+
+	if (isLoading) {
+		return <div>Loading...</div>;
+	}
+
+	if (!userData) {
+		return <Navigate to='/auth/login' />;
+	}
 
 	return token ? (
 		<Outlet />
 	) : (
-		<Navigate to='/' state={{ from: location }} replace />
+		<Navigate to='/auth/login' state={{ from: location }} replace />
 	);
 };
 

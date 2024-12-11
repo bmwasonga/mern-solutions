@@ -39,7 +39,7 @@ export const authApi = createApi({
 		}),
 		refetchUser: builder.query({
 			query: (token) => ({
-				url: '/refetch-useer',
+				url: '/refetch-user',
 				headers: {
 					Authorization: `Bearer ${token}`,
 				},
