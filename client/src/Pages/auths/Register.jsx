@@ -22,7 +22,7 @@ function Register() {
 
 	useEffect(() => {
 		if (isSuccess) {
-			navigate('/test');
+			navigate('/members');
 		}
 	}, [isSuccess, navigate]);
 

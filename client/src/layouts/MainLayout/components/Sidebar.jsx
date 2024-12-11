@@ -1,3 +1,4 @@
+import { Link } from 'react-router';
 import {
 	HiOutlineX,
 	HiHome,
@@ -8,10 +9,14 @@ import { logout } from '../../../features/authSlice';
 
 const Sidebar = ({ toggleSidebar, isSidebarOpen }) => {
 	const navItems = [
-		{ name: 'Dashboard', icon: <HiHome /> },
-		{ name: 'Analytics', icon: <HiOutlinePresentationChartLine /> },
-		{ name: 'Users', icon: <IoPeople /> },
-		{ name: 'Settings', icon: <IoSettingsOutline /> },
+		{ name: 'Dashboard', icon: <HiHome />, link: '/test' },
+		{
+			name: 'Analytics',
+			icon: <HiOutlinePresentationChartLine />,
+			link: '/members',
+		},
+		{ name: 'Users', icon: <IoPeople />, link: '/activities' },
+		{ name: 'Settings', icon: <IoSettingsOutline />, link: '/settings' },
 	];
 
 	return (
@@ -34,12 +39,14 @@ const Sidebar = ({ toggleSidebar, isSidebarOpen }) => {
 				<ul className='space-y-2'>
 					{navItems.map((item) => (
 						<li key={item.name}>
-							<a
-								href='#'
-								className='flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 transition-colors'>
+							<Link
+								to={item.link}
+								className={`flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 transition-colors ${
+									location.pathname === item.link ? 'bg-gray-200' : ''
+								}`}>
 								<span className='text-xl'>{item.icon}</span>
 								<span>{item.name}</span>
-							</a>
+							</Link>
 						</li>
 					))}
 				</ul>
