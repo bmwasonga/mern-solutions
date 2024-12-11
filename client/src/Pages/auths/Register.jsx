@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useRegisterMutation } from '../../features/auth/api';
 
 function Register() {
-	const [signup, { error }] = useRegisterMutation();
+	const [signup, { error, isSuccess }] = useRegisterMutation();
 	const navigate = useNavigate();
 	const {
 		register,
@@ -20,11 +20,11 @@ function Register() {
 		});
 	};
 
-	// useEffect(() => {
-	// 	if (isAuthenticated) {
-	// 		navigate('/home');
-	// 	}
-	// }, [isAuthenticated, navigate]);
+	useEffect(() => {
+		if (isSuccess) {
+			navigate('/test');
+		}
+	}, [isSuccess, navigate]);
 
 	return (
 		<form onSubmit={handleSubmit(onSubmit)}>

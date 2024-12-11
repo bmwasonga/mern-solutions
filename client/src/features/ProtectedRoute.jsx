@@ -1,6 +1,5 @@
 import { useLocation, Navigate, Outlet } from 'react-router';
 import { useRefetchUserQuery } from './auth/api';
-import { skipToken } from '@reduxjs/toolkit/query';
 import { getToken } from '../constants';
 const ProtectedRoute = () => {
 	const location = useLocation();
