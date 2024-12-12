@@ -43,7 +43,7 @@ export const useAuth = () => {
 			skip: !auth.token,
 			onError: (error) => {
 				if (error.status === 401) {
-					window.location.href = '/auth/register';
+					window.location.href = '/register';
 				}
 			},
 		}

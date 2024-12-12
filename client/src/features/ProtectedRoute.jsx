@@ -12,13 +12,13 @@ const ProtectedRoute = () => {
 	}
 
 	if (!userData) {
-		return <Navigate to='/auth/login' />;
+		return <Navigate to='/login' />;
 	}
 
 	return token ? (
 		<Outlet />
 	) : (
-		<Navigate to='/auth/login' state={{ from: location }} replace />
+		<Navigate to='/login' state={{ from: location }} replace />
 	);
 };
 

@@ -9,14 +9,14 @@ import { logout } from '../../../features/authSlice';
 
 const Sidebar = ({ toggleSidebar, isSidebarOpen }) => {
 	const navItems = [
-		{ name: 'Dashboard', icon: <HiHome />, link: '/test' },
+		{ name: 'Dashboard', icon: <HiHome />, link: '/' },
 		{
 			name: 'Analytics',
 			icon: <HiOutlinePresentationChartLine />,
 			link: '/members',
 		},
 		{ name: 'Users', icon: <IoPeople />, link: '/activities' },
-		{ name: 'Settings', icon: <IoSettingsOutline />, link: '/settings' },
+		{ name: 'Settings', icon: <IoSettingsOutline />, link: '/' },
 	];
 
 	return (

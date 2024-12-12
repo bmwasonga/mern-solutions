@@ -1,11 +1,6 @@
 import { HiOutlineViewList } from 'react-icons/hi';
 
-const Header = ({ data, toggleSidebar, isSidebarOpen }) => {
-	if (!data) {
-		return null;
-	}
-	const { username, email } = data.user;
-
+const Header = ({ toggleSidebar, isSidebarOpen }) => {
 	return (
 		<>
 			<nav className='md:hidden bg-white shadow-md fixed w-full top-0 z-50'>
@@ -14,10 +9,6 @@ const Header = ({ data, toggleSidebar, isSidebarOpen }) => {
 					<button onClick={toggleSidebar} className='p-1 cursor-pointer'>
 						<HiOutlineViewList className='h-6 w-6' />
 					</button>
-					<span className='font-semibold text-lg'>Dashboard</span>
-					<div className='w-6' /> {/* Spacer for alignment */}
-					<span>{username}</span>
-					<span>{email}</span>
 				</div>
 			</nav>
 
