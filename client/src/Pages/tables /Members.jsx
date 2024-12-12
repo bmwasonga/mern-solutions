@@ -20,9 +20,8 @@ const Members = () => {
 	const serverUrl = process.env.REACT_APP_SERVER_URL || 'http://localhost:3001';
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [isEditing, setIsEditing] = useState(false);
-	const { register, handleSubmit, reset, setValue } = useForm();
 	const [currentProfilePicture, setCurrentProfilePicture] = useState(null);
-
+	const { register, handleSubmit, reset, setValue } = useForm();
 	const { members, isLoading, error, selectedMember } = useSelector(
 		(state) => state.members
 	);
@@ -103,6 +102,9 @@ const Members = () => {
 				.then(() => {
 					dispatch(getAllMembers());
 					handleCloseModal();
+				})
+				.catch(() => {
+					alert('Failed to update member');
 				});
 		} else {
 			dispatch(createMember(formData))
@@ -110,6 +112,9 @@ const Members = () => {
 				.then(() => {
 					dispatch(getAllMembers());
 					handleCloseModal();
+				})
+				.catch(() => {
+					alert('Failed to create member');
 				});
 		}
 	};

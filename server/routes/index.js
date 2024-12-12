@@ -8,7 +8,6 @@ const { getAllActivities } = require('../controllers/activityController');
 
 // Auth routes
 router.post('/register', authController.register);
-// router.put('/update-role', authenticate, authController.updateUserRole);
 
 router.post('/login', authController.login);
 router.get('/refetch-user', authenticate, authController.refetchUser);
@@ -21,8 +20,8 @@ router.post(
 );
 router.get('/get-all-members', memberController.getAllMembers);
 router.get('/getmember/:id', authenticate, memberController.getMember);
-router.put(
-	'/members/:id',
+router.patch(
+	'/member/:id',
 	authenticate,
 	memberController.uploadMiddleware,
 	memberController.updateMember

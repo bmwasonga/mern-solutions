@@ -135,7 +135,7 @@ exports.updateMember = async (req, res) => {
 	try {
 		const user = await authenticate(req, res);
 
-		const member = await db.Member.findByPk(req.params.id);
+		const member = await Member.findByPk(req.params.id);
 		if (!member) {
 			return res.status(404).json({ message: 'Member not found' });
 		}
