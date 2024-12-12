@@ -5,7 +5,6 @@ import {
 	HiOutlinePresentationChartLine,
 } from 'react-icons/hi';
 import { IoPeople, IoSettingsOutline } from 'react-icons/io5';
-import { logout } from '../../../features/authSlice';
 
 const Sidebar = ({ toggleSidebar, isSidebarOpen }) => {
 	const navItems = [
@@ -17,7 +16,7 @@ const Sidebar = ({ toggleSidebar, isSidebarOpen }) => {
 			icon: <HiOutlinePresentationChartLine />,
 			link: '/activities',
 		},
-		{ name: 'Settings', icon: <IoSettingsOutline />, link: '/' },
+		{ name: 'Settings', icon: <IoSettingsOutline />, link: '/settings' },
 	];
 
 	return (
@@ -52,10 +51,6 @@ const Sidebar = ({ toggleSidebar, isSidebarOpen }) => {
 					))}
 				</ul>
 			</nav>
-
-			<button type='submit' onClick={() => logout}>
-				Logout{' '}
-			</button>
 		</aside>
 	);
 };

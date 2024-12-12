@@ -1,63 +1,45 @@
-import { useState, useRef } from 'react';
-import { Upload } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
-const FileUpload = () => {
-	const [image, setImage] = useState(null);
-	const fileInputRef = useRef(null);
+const FileUpload = ({ preloadedImageUrl, onUpload }) => {
+	const [preview, setPreview] = useState(preloadedImageUrl || '');
+	const [, setFile] = useState(null);
 
-	console.log(image);
+	useEffect(() => {
+		setPreview(preloadedImageUrl || '');
+	}, [preloadedImageUrl]);
 
 	const handleFileChange = (e) => {
-		const file = e.target.files[0];
-		if (file && file.type.startsWith('image/')) {
-			setImage(file);
+		const selectedFile = e.target.files[0];
+		if (selectedFile) {
+			setFile(selectedFile);
+			onUpload(selectedFile);
+			// Create preview URL
+			const objectUrl = URL.createObjectURL(selectedFile);
+			setPreview(objectUrl);
 		}
-	};
-
-	const handleDrop = (e) => {
-		e.preventDefault();
-		const file = e.dataTransfer.files[0];
-		if (file && file.type.startsWith('image/')) {
-			setImage(file);
-		}
-	};
-
-	const handleDragOver = (e) => {
-		e.preventDefault();
 	};
 
 	return (
-		<div className='w-full max-w-md mx-auto p-4'>
-			<div
-				className='border-2 border-dashed rounded-lg p-4 text-center'
-				onDrop={handleDrop}
-				onDragOver={handleDragOver}
-				onClick={() => fileInputRef.current?.click()}>
-				{image ? (
-					<>
-						<img
-							src={URL.createObjectURL(image)}
-							alt='Preview'
-							className='h-32 w-32 object-cover rounded-full object-center'
-						/>
-						<h1>Image will be displayed like</h1>
-					</>
-				) : (
-					<div className='py-8'>
-						<Upload className='mx-auto h-12 w-12 text-gray-400' />
-						<p className='mt-2 text-sm text-gray-500'>
-							Drop an image here or click to upload
-						</p>
-					</div>
-				)}
-				<input
-					ref={fileInputRef}
-					type='file'
-					accept='image/*'
-					onChange={handleFileChange}
-					className='hidden'
+		<div className='flex flex-col items-center gap-4 mb-4'>
+			{preview && (
+				<img
+					src={preview}
+					alt='Preview'
+					className='w-32 h-32 rounded-full object-cover'
 				/>
-			</div>
+			)}
+			<input
+				type='file'
+				onChange={handleFileChange}
+				accept='image/*'
+				className='hidden'
+				id='file-upload'
+			/>
+			<label
+				htmlFor='file-upload'
+				className='bg-blue-500 text-white px-4 py-2 rounded cursor-pointer hover:bg-blue-600'>
+				{preview ? 'Change Image' : 'Upload Image'}
+			</label>
 		</div>
 	);
 };

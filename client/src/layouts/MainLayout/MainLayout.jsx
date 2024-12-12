@@ -11,7 +11,7 @@ const MainLayout = ({ children }) => {
 		setIsSidebarOpen(!isSidebarOpen);
 	};
 
-	const { username, email } = data.user;
+	// const { username, email } = data.user;
 
 	return (
 		<div className='min-h-screen bg-gray-100 overflow-x-scroll'>
@@ -24,9 +24,9 @@ const MainLayout = ({ children }) => {
 						<div className='flex-1' /> {/* Spacer for alignment */}
 						<div className=' flex flex-col'>
 							<span className='text-sm text-gray-700'>
-								Username: {username}
+								Username: {data?.user?.username}
 							</span>
-							<span className='text-sm text-gray-500'>Email: {email}</span>
+							{/* <span className='text-sm text-gray-500'>Email: {email}</span> */}
 						</div>
 					</section>
 					{children}

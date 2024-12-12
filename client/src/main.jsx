@@ -10,6 +10,7 @@ import ProtectedRoute from './features/ProtectedRoute.jsx';
 import MainLayout from './layouts/MainLayout/MainLayout.jsx';
 import Members from './Pages/tables /Members.jsx';
 import Activities from './Pages/tables /Activities.jsx';
+import Settings from './Pages/Settings.jsx';
 
 createRoot(document.getElementById('root')).render(
 	<Provider store={store}>
@@ -21,6 +22,7 @@ createRoot(document.getElementById('root')).render(
 					<Route path='/' element={<MainLayout />} />
 					<Route path='/members' element={<Members />} />
 					<Route path='/activities' element={<Activities />} />
+					<Route path='/settings' element={<Settings />} />
 				</Route>
 				{/* Catch all route for non-existent pages */}
 				<Route path='*' element={<Navigate to='/' replace />} />

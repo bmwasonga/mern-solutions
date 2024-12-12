@@ -1,18 +1,27 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { HiPencil, HiOutlineTrash } from 'react-icons/hi';
+import { useEffect, useState } from 'react';
+import { HiPencil, HiOutlineTrash, HiX } from 'react-icons/hi';
 import Table from '../../layouts/MainLayout/components/Tables';
 import FormButton from '../../components/FormButton';
 import MainLayout from '../../layouts/MainLayout/MainLayout';
-import { useEffect } from 'react';
 import {
 	getAllMembers,
 	deleteMember,
 	setSelectedMember,
+	updateMember,
+	createMember,
 } from '../../features/auth/membersApi';
+import Modal from '../../components/Modal';
+import { useForm } from 'react-hook-form';
+import FileUpload from '../../components/FileUpload';
 
 const Members = () => {
 	const dispatch = useDispatch();
 	const serverUrl = process.env.REACT_APP_SERVER_URL || 'http://localhost:3001';
+	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [isEditing, setIsEditing] = useState(false);
+	const { register, handleSubmit, reset, setValue } = useForm();
+	const [currentProfilePicture, setCurrentProfilePicture] = useState(null);
 
 	const { members, isLoading, error, selectedMember } = useSelector(
 		(state) => state.members
@@ -22,28 +31,87 @@ const Members = () => {
 		dispatch(getAllMembers());
 	}, [dispatch]);
 
+	useEffect(() => {
+		if (selectedMember?.profilePicture) {
+			const fullUrl = selectedMember.profilePicture.startsWith('http')
+				? selectedMember.profilePicture
+				: `${serverUrl}/${selectedMember.profilePicture}`;
+			setCurrentProfilePicture(fullUrl);
+		} else {
+			setCurrentProfilePicture(null);
+		}
+	}, [selectedMember, serverUrl]);
+
 	const handleSelectMember = (member) => {
 		dispatch(setSelectedMember(member));
 	};
 
 	const handleCreateMember = () => {
-		// Logic to create a new member
-		console.log('Create member button clicked');
+		setIsModalOpen(true);
+		setIsEditing(false);
+		setCurrentProfilePicture(null);
+		reset();
+		dispatch(setSelectedMember(null));
 	};
 
 	const handleEditMember = (id) => {
-		// Logic to edit a member
-		console.log(`Edit member with ID: ${id}`);
+		setIsModalOpen(true);
+		setIsEditing(true);
+		const member = members.find((member) => member.id === id);
+		if (member) {
+			dispatch(setSelectedMember(member));
+			setValue('name', member.name);
+			setValue('email', member.email);
+			setValue('dateOfBirth', member.dateOfBirth);
+			if (member.profilePicture) {
+				const fullUrl = member.profilePicture.startsWith('http')
+					? member.profilePicture
+					: `${serverUrl}/${member.profilePicture}`;
+				setCurrentProfilePicture(fullUrl);
+			}
+		}
+	};
+
+	const handleCloseModal = () => {
+		setIsModalOpen(false);
+		setIsEditing(false);
+		setCurrentProfilePicture(null);
+		reset();
+		dispatch(setSelectedMember(null));
 	};
 
 	const handleDeleteMember = (id) => {
-		console.log(`Delete member with ID: ${id}`);
-
 		dispatch(deleteMember({ id }))
 			.unwrap()
 			.then(() => {
 				dispatch(getAllMembers());
 			});
+	};
+
+	const onSubmit = (data) => {
+		const formData = new FormData();
+		formData.append('name', data.name);
+		formData.append('email', data.email);
+		formData.append('dateOfBirth', data.dateOfBirth);
+		if (data.profilePicture) {
+			formData.append('profilePicture', data.profilePicture);
+		}
+
+		if (isEditing && selectedMember) {
+			dispatch(updateMember({ id: selectedMember.id, formData }))
+				.unwrap()
+				.then(() => {
+					dispatch(getAllMembers());
+					handleCloseModal();
+				});
+		} else {
+			dispatch(createMember(formData))
+				.unwrap()
+				.then(() => {
+					dispatch(getAllMembers());
+					handleCloseModal();
+				});
+		}
 	};
 
 	const columns = [
@@ -54,25 +122,46 @@ const Members = () => {
 		{
 			key: 'profilePicture',
 			label: 'Profile Picture',
-			render: (value) => (
-				<img
-					src={`${serverUrl}/${value}`}
-					alt='Profile'
-					className='w-10 h-10 rounded-full'
-				/>
-			),
+			render: (value) => {
+				const imageUrl = value?.startsWith('http')
+					? value
+					: `${serverUrl}/${value}`;
+				return (
+					<img
+						src={imageUrl}
+						alt='Profile'
+						className='w-10 h-10 rounded-full object-cover'
+					/>
+				);
+			},
 		},
-		{ key: 'createdAt', label: 'Created At' },
-		{ key: 'updatedAt', label: 'Updated At' },
+		{
+			key: 'createdAt',
+			label: 'Created At',
+			render: (value) => new Date(value).toLocaleString(),
+		},
+		{
+			key: 'updatedAt',
+			label: 'Updated At',
+			render: (value) => new Date(value).toLocaleString(),
+		},
 		{
 			key: 'actions',
 			label: 'Actions',
 			render: (_, row) => (
 				<div className='flex space-x-2'>
-					<button onClick={() => handleEditMember(row.id)}>
+					<button
+						onClick={(e) => {
+							e.stopPropagation();
+							handleEditMember(row.id);
+						}}>
 						<HiPencil className='h-5 w-5' />
 					</button>
-					<button onClick={() => handleDeleteMember(row.id)}>
+					<button
+						onClick={(e) => {
+							e.stopPropagation();
+							handleDeleteMember(row.id);
+						}}>
 						<HiOutlineTrash className='h-5 w-5 text-red-500' />
 					</button>
 				</div>
@@ -96,15 +185,39 @@ const Members = () => {
 				sortable
 				onRowClick={handleSelectMember}
 			/>
-
-			{selectedMember && (
-				<div className='mt-4'>
-					<h2>Selected Member</h2>
-					<p>ID: {selectedMember.id}</p>
-					<p>Name: {selectedMember.name}</p>
-					<p>Email: {selectedMember.email}</p>
+			<Modal isOpen={isModalOpen} onClose={handleCloseModal}>
+				<div className='flex items-center justify-between'>
+					<h2>{isEditing ? 'Edit Member' : 'Create Member'}</h2>
+					<button onClick={handleCloseModal}>
+						<HiX className='h-5 w-5' />
+					</button>
 				</div>
-			)}
+				<form onSubmit={handleSubmit(onSubmit)}>
+					<FileUpload
+						preloadedImageUrl={currentProfilePicture}
+						onUpload={(file) => setValue('profilePicture', file)}
+					/>
+					<div>
+						<label>Name</label>
+						<input {...register('name')} className='border p-2 w-full' />
+					</div>
+					<div>
+						<label>Email</label>
+						<input {...register('email')} className='border p-2 w-full' />
+					</div>
+					<div>
+						<label>Date of Birth</label>
+						<input
+							type='date'
+							{...register('dateOfBirth')}
+							className='border p-2 w-full'
+						/>
+					</div>
+					<FormButton type='submit' variant='primary'>
+						{isEditing ? 'Save' : 'Create'}
+					</FormButton>
+				</form>
+			</Modal>
 		</MainLayout>
 	);
 };
