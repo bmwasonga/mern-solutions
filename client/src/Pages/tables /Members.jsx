@@ -12,6 +12,7 @@ import {
 
 const Members = () => {
 	const dispatch = useDispatch();
+	const serverUrl = process.env.REACT_APP_SERVER_URL || 'http://localhost:3001';
 
 	const { members, isLoading, error, selectedMember } = useSelector(
 		(state) => state.members
@@ -54,7 +55,11 @@ const Members = () => {
 			key: 'profilePicture',
 			label: 'Profile Picture',
 			render: (value) => (
-				<img src={value} alt='Profile' className='w-10 h-10 rounded-full' />
+				<img
+					src={`${serverUrl}/${value}`}
+					alt='Profile'
+					className='w-10 h-10 rounded-full'
+				/>
 			),
 		},
 		{ key: 'createdAt', label: 'Created At' },

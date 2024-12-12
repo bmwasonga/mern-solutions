@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const router = express.Router();
 const authController = require('../controllers/authController');
 const memberController = require('../controllers/memberController');
@@ -35,5 +36,7 @@ router.post(
 router.delete('/member/:id', authenticate, memberController.deleteMember);
 
 router.get('/activities', getAllActivities);
+
+router.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 module.exports = router;

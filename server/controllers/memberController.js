@@ -7,7 +7,9 @@ const path = require('path');
 const { logActivity } = require('../middleware/auth');
 
 const storage = multer.diskStorage({
-	destination: 'uploads/',
+	destination: (req, file, cb) => {
+		cb(null, 'uploads/');
+	},
 	filename: (req, file, cb) => {
 		const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
 		cb(
@@ -26,6 +28,7 @@ exports.createMember = async (req, res) => {
 		const { name, email, dateOfBirth } = req.body;
 		const profilePicture = req.file?.path;
 
+		console.log(req.body);
 		const user = await authenticate(req, res);
 
 		const member = await Member.create({
@@ -65,7 +68,7 @@ exports.createMember = async (req, res) => {
 			data: createdMember,
 		});
 	} catch (error) {
-		return res.status(400).json({ message: error.message });
+		return res.status(400).json({ message: error.message }).end();
 	}
 };
 
