@@ -16,7 +16,7 @@ const getAllMembers = createAsyncThunk(
 );
 
 const updateMember = createAsyncThunk(
-	'/members/:id',
+	'/member/:id',
 	async ({ id, updates }) => {
 		const response = await fetch(`${API_URL}/members/${id}`, {
 			method: 'PATCH',
@@ -32,13 +32,17 @@ const updateMember = createAsyncThunk(
 );
 
 const deleteMember = createAsyncThunk('/members/:id', async ({ id }) => {
-	const response = await fetch(`${API_URL}/members/${id}`, {
+	console.log('the id is', id);
+	const response = await fetch(`${API_URL}/member/${id}`, {
 		method: 'DELETE',
 		headers: {
 			Authorization: `Bearer ${getToken()}`,
 		},
 	});
-	return response.json();
+	if (!response.ok) {
+		throw new Error('Failed to delete member');
+	}
+	return id;
 });
 
 const membersSlice = createSlice({
@@ -84,21 +88,22 @@ const membersSlice = createSlice({
 		// 	state.error = action.error.message;
 		// });
 
-		// builder.addCase(deleteMember.pending, (state) => {
-		// 	state.isLoading = true;
-		// });
-		// builder.addCase(deleteMember.fulfilled, (state, action) => {
-		// 	state.isLoading = false;
-		// 	state.members = state.members.filter(
-		// 		(member) => member.id !== action.payload.id
-		// 	);
-		// });
-		// builder.addCase(deleteMember.rejected, (state, action) => {
-		// 	state.isLoading = false;
-		// 	state.error = action.error.message;
-		// });
+		builder.addCase(deleteMember.pending, (state) => {
+			state.isLoading = true;
+		});
+		builder.addCase(deleteMember.fulfilled, (state, action) => {
+			state.isLoading = false;
+			state.members = state.members.filter(
+				(member) => member.id !== action.payload.id
+			);
+		});
+		builder.addCase(deleteMember.rejected, (state, action) => {
+			state.isLoading = false;
+			state.error = action.error.message;
+		});
 	},
 });
+export const { setSelectedMember } = membersSlice.actions;
 
 export default membersSlice.reducer;
 

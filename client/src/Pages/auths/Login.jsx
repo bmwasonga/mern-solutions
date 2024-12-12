@@ -28,9 +28,15 @@ function Login() {
 	return (
 		<FormContainer>
 			<form onSubmit={handleSubmit(onSubmit)}>
-				{isError && <p>{error.message}</p>}
+				{/* {isError && <p>{error.message}</p>} */}
+				{isError && (
+					<p className='text-red-500 text-sm mt-1'>
+						{error.data
+							? JSON.stringify(error.data.message)
+							: 'An error occurred'}
+					</p>
+				)}
 				<h1>Login</h1>
-
 				<div className='relative mt-10'>
 					<label
 						htmlFor='username'
@@ -49,7 +55,6 @@ function Login() {
 						</p>
 					)}
 				</div>
-
 				<div className='relative mt-10'>
 					<label
 						htmlFor='password'
@@ -68,7 +73,6 @@ function Login() {
 						</p>
 					)}
 				</div>
-
 				<div className='relative mt-10'>
 					<label
 						htmlFor='confirmPassword'
@@ -87,14 +91,20 @@ function Login() {
 						</p>
 					)}
 				</div>
-
 				<button
 					type='submit'
-					className='w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500'
+					className='w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 mt-2'
 					disabled={isLoading}>
 					{isLoading ? <p>Loading...</p> : 'Login'}
 				</button>
 			</form>
+
+			<p className='text-center mt-4'>
+				Don&apos;t have an account?
+				<a href='/register' className='text-blue-600 hover:underline'>
+					Register here
+				</a>
+			</p>
 		</FormContainer>
 	);
 }

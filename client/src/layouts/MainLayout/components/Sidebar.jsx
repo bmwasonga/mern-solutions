@@ -10,12 +10,13 @@ import { logout } from '../../../features/authSlice';
 const Sidebar = ({ toggleSidebar, isSidebarOpen }) => {
 	const navItems = [
 		{ name: 'Dashboard', icon: <HiHome />, link: '/' },
+
+		{ name: 'members', icon: <IoPeople />, link: '/members ' },
 		{
-			name: 'Analytics',
+			name: 'Activities',
 			icon: <HiOutlinePresentationChartLine />,
-			link: '/members',
+			link: '/activities',
 		},
-		{ name: 'Users', icon: <IoPeople />, link: '/activities' },
 		{ name: 'Settings', icon: <IoSettingsOutline />, link: '/' },
 	];
 
@@ -27,7 +28,7 @@ const Sidebar = ({ toggleSidebar, isSidebarOpen }) => {
 		${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
 	`}>
 			<div className='flex items-center justify-between p-4 border-b'>
-				<span className='font-bold text-xl'>You, The people</span>
+				<span className='font-bold text-xl'>WE, The people</span>
 				<button
 					className='md:hidden p-1 cursor-pointer'
 					onClick={toggleSidebar}>
