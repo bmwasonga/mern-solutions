@@ -18,6 +18,7 @@ exports.getAllActivities = async (req, res) => {
 				],
 			},
 		],
+		order: [['createdAt', 'DESC']],
 		offset,
 		limit: perPage,
 	});

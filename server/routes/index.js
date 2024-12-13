@@ -8,7 +8,6 @@ const { getAllActivities } = require('../controllers/activityController');
 
 // Auth routes
 router.post('/register', authController.register);
-
 router.post('/login', authController.login);
 router.get('/refetch-user', authenticate, authController.refetchUser);
 

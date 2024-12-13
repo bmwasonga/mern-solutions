@@ -121,7 +121,7 @@ exports.getAllMembers = async (req, res) => {
 		await logActivity(
 			user,
 			'FETCH_ALL_MEMBERS',
-			`User ${user.name} fetched all members`,
+			`User ${user.id} fetched all members`,
 			user.id
 		);
 

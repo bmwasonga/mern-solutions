@@ -9,20 +9,22 @@ const Activities = () => {
 	const { activities, isLoading, error } = useSelector(
 		(state) => state.activities
 	);
-
+	console.log(activities);
 	useEffect(() => {
 		dispatch(getAllActivities());
 	}, [dispatch]);
 
-	console.log('the activities are', activities);
+	console.log(activities.User?.email);
 	const columns = [
 		{ key: 'id', label: 'ID' },
 		{ key: 'actionType', label: 'actionType' },
 		{ key: 'details', label: 'details' },
 		{ key: 'userId', label: 'User Id' },
-
-		{ key: 'createdAt', label: 'Created At' },
-		{ key: 'updatedAt', label: 'Updated At' },
+		{
+			key: 'createdAt',
+			label: 'Created At',
+			render: (value) => new Date(value).toLocaleString(),
+		},
 	];
 
 	return (
