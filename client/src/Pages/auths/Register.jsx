@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router';
 import { useEffect } from 'react';
 import { useRegisterMutation } from '../../features/auth/api';
 import FormContainer from '../../components/FormContainer';
+import { Loading } from '../../components/Handlers';
 
 function Register() {
 	const [signup, { isError, isSuccess, isLoading, error }] =
@@ -119,7 +120,7 @@ function Register() {
 					type='submit'
 					className='w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 mt-2'
 					disabled={isLoading}>
-					{isLoading ? <p>Loading...</p> : 'Login'}
+					{isLoading ? <Loading /> : 'Login'}
 				</button>
 
 				<p className='mt-5 text-center'>

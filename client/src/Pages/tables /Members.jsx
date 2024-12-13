@@ -14,6 +14,7 @@ import {
 import Modal from '../../components/Modal';
 import { useForm } from 'react-hook-form';
 import FileUpload from '../../components/FileUpload';
+import { Loading } from '../../components/Handlers';
 
 const Members = () => {
 	const dispatch = useDispatch();
@@ -180,7 +181,7 @@ const Members = () => {
 			<FormButton onClick={handleCreateMember} variant='primary'>
 				Create Member
 			</FormButton>
-			{isLoading && !error && <p>Loading...</p>}
+			{isLoading && !error && <Loading />}
 			<Table
 				isLoading={isLoading}
 				data={members}

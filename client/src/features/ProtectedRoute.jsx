@@ -1,6 +1,7 @@
 import { useLocation, Navigate, Outlet } from 'react-router';
 import { useRefetchUserQuery } from './auth/api';
 import { getToken } from '../constants';
+import { Loading } from '../components/Handlers';
 const ProtectedRoute = () => {
 	const location = useLocation();
 	const token = getToken();
@@ -8,7 +9,7 @@ const ProtectedRoute = () => {
 	const { data: userData, isLoading } = useRefetchUserQuery();
 
 	if (isLoading) {
-		return <div>Loading...</div>;
+		return <Loading />;
 	}
 
 	if (!userData) {

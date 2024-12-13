@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router';
 import { useEffect } from 'react';
 import { useLoginMutation } from '../../features/auth/api';
 import FormContainer from '../../components/FormContainer';
+import { Error, Loading } from '../../components/Handlers';
 function Login() {
 	const [loginMutation, { isError, isSuccess, isLoading, error }] =
 		useLoginMutation();
@@ -30,11 +31,12 @@ function Login() {
 			<form onSubmit={handleSubmit(onSubmit)}>
 				{/* {isError && <p>{error.message}</p>} */}
 				{isError && (
-					<p className='text-red-500 text-sm mt-1'>
-						{error.data
-							? JSON.stringify(error.data.message)
-							: 'An error occurred'}
-					</p>
+					<Error
+						message={
+							error.data
+								? JSON.stringify(error.data.message)
+								: 'An error occurred'
+						}></Error>
 				)}
 				<h1>Login</h1>
 				<div className='relative mt-10'>
@@ -95,7 +97,7 @@ function Login() {
 					type='submit'
 					className='w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 mt-2'
 					disabled={isLoading}>
-					{isLoading ? <p>Loading...</p> : 'Login'}
+					{isLoading ? <Loading /> : 'Login'}
 				</button>
 			</form>
 

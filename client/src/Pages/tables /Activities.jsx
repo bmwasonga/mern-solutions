@@ -3,6 +3,7 @@ import { getAllActivities } from '../../features/auth/activitiesApi';
 import Table from '../../layouts/MainLayout/components/Tables';
 import MainLayout from '../../layouts/MainLayout/MainLayout';
 import { useDispatch, useSelector } from 'react-redux';
+import { Error, Loading } from '../../components/Handlers';
 const Activities = () => {
 	const dispatch = useDispatch();
 	const { activities, isLoading, error } = useSelector(
@@ -27,8 +28,8 @@ const Activities = () => {
 	return (
 		<MainLayout>
 			<h1>Activities table</h1>
-			{isLoading && <p>Loading...</p>}
-			{error && <p>Error: {error}</p>}
+			{isLoading && <Loading />}
+			{error && <Error message={error} />}
 			<Table
 				isLoading={isLoading}
 				data={activities}
